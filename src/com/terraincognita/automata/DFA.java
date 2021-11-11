@@ -1,11 +1,21 @@
 package com.terraincognita.automata;
 
-public class DFA extends FSA {
+import java.util.Collection;
+
+public class DFA extends FSA<String>{
     /**
      * Return the start state of the FSA
      */
     @Override
-    public FSAState getStartState() {
+    public String getStartState() {
+        return null;
+    }
+
+    /**
+     * Return the accepting states of the FSA
+     */
+    @Override
+    public Collection<String> getAcceptingStates() {
         return null;
     }
 

@@ -1,10 +1,18 @@
 package com.terraincognita.automata;
 
-public abstract class FSA <T extends FSAState>{
+import java.util.Collection;
+import java.util.List;
+
+public abstract class FSA<T>{
     /**
      * Return the start state of the FSA
      */
     public abstract T getStartState();
+
+    /**
+     * Return the accepting states of the FSA
+     */
+    public abstract Collection<T> getAcceptingStates();
 
     /**
      * Run the FSA from the start state with a given string

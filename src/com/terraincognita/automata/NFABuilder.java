@@ -6,83 +6,74 @@ public class NFABuilder implements FSABuilder{
     private NFA nfa;
 
     /**
+     * Input an NFA to the builder
+     */
+    public void setNFA(NFA nfa){
+        this.nfa = nfa;
+    }
+
+    /**
+     * Return the NFA in the builder
+     */
+    public NFA getResult(){
+        return this.nfa;
+    }
+
+    /**
      * Reset the builder
      */
     @Override
-    public void reset() {
-        this.nfa = new NFA();
+    public void reset(String id) {
+        this.nfa = new NFA(id);
     }
 
     /**
-     * Set the start state of the FSA by index
+     * Add a state to the FSA with start/accepting indication
      *
-     * @param id the id of the start state
-     * @throws
+     * @param isStart whether the state is a start state
+     * @param isAccepting weather the state is an accepting state
      */
-    //TODO create an exception for id not in states
     @Override
-    public void setStartState(String id) {
-        if(!this.nfa.states.containsKey(id)){
-            //TODO Throw exception
+    public void addState(boolean isStart, boolean isAccepting) {
+        String newState = this.nfa.getId() + this.nfa.states.size();
+        this.nfa.states.add(newState);
+
+        if(isStart){
+            this.nfa.startState = newState;
         }
 
-        this.nfa.startState = this.nfa.states.get(id);
-    }
-
-    /**
-     * Add a state to the FSA with a given id
-     *
-     * @param id the id of the state
-     * @throws
-     */
-    @Override
-    public void addState(String id) {
-        if(this.nfa.states.containsKey(id)){
-            //TODO throw exception
+        if(isAccepting){
+            this.nfa.acceptingState.add(newState);
         }
-        this.nfa.states.put(id, new NFAState(id, false));
     }
 
     /**
-     * Add a state to the FSA while indicating whether it is an accepting state
-     *
-     * @param id          the id of the state
-     * @param isAccepting whether the state is an accepting state
+     * Add an intermediate state to the FSA
      */
     @Override
-    public void addState(String  id, boolean isAccepting) {
-        this.nfa.states.put(id, new NFAState(id, isAccepting));
+    public void addState() {
+        String newState = this.nfa.getId() + this.nfa.states.size();
+        this.nfa.states.add(newState);
     }
 
     /**
      * Add a transition to the FSA
      *
-     * @param fromId the id of the from-state of the transition
-     * @param alphabet the alphabet of the transition
-     * @param toId the id of the to-state of the transition
+     * @param fromState the state where the transition starts
+     * @param alphabet the alphabet for the transition
+     * @param toState the state where the transition ends
      */
+    //TODO throw exception if fromState or toState is not in nfa.state
     @Override
-    public void addTransition(String fromId, String alphabet, String toId) {
-        if(!this.nfa.states.containsKey(fromId) || !this.nfa.states.containsKey(toId)){
-            //TODO throw exception
-        }
+    public void addTransition(String fromState, String alphabet, String toState) {
+        Map<String, Set<String>> transition = this.nfa.transitionTable.get(fromState);
 
-        // if the alphabet is in the transitionTable, add the to state into the value list
-        // else put (alphabet, [to-state]) pair into the table
-        if(this.nfa.transitionTable.get(fromId).containsKey(alphabet)){
-            NFAState toState = this.nfa.states.get(toId);
-            this.nfa.transitionTable.get(fromId).get(alphabet).add(toState);
+        if(transition.containsKey(alphabet)){
+            transition.get(alphabet).add(toState);
         } else{
-            List<NFAState> transitionList = new ArrayList<>();
-            transitionList.add(this.nfa.states.get(toId));
-            this.nfa.transitionTable.get(fromId).put(alphabet, transitionList);
+            Set<String> newToSet = new HashSet<>();
+            newToSet.add(toState);
+            transition.put(alphabet, newToSet);
         }
-    }
-
-    /**
-     * Return the NFA from builder
-     */
-    public NFA getResult(){
-        return this.nfa;
     }
 }

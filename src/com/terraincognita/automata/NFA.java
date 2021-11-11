@@ -2,23 +2,47 @@ package com.terraincognita.automata;
 
 import java.util.*;
 
-public class NFA extends FSA<NFAState>{
-    protected Map<String, NFAState> states;
-    protected NFAState startState;
-    protected Map<String, Map<String, List<NFAState>>> transitionTable;
+public class NFA extends FSA<String>{
+    /**
+     * Each state is represented as a String in a format of NFAId + index
+     */
+    // id of the NFA
+    private final String id;
 
-    public NFA(){
-        this.states = new HashMap<>();
+    // FSA attributes
+    protected Set<String> states;
+    protected String startState;
+    protected Set<String> acceptingState;
+    protected Map<String, Map<String, Set<String>>> transitionTable;
+
+    public NFA(String id){
+        this.id = id;
+        this.states = new HashSet<>();
         this.startState = null;
         this.transitionTable = new HashMap<>();
+    }
+
+    /**
+     * Return the id of this NFA
+     */
+    public String getId(){
+        return this.id;
     }
 
     /**
      * Return the start state of the FSA
      */
     @Override
-    public NFAState getStartState() {
+    public String getStartState() {
         return this.startState;
+    }
+
+    /**
+     * Return the accepting states of the FSA
+     */
+    @Override
+    public Set<String> getAcceptingStates() {
+        return this.acceptingState;
     }
 
     /**
@@ -27,10 +51,11 @@ public class NFA extends FSA<NFAState>{
      * @param alphabets a given string to run the FSA
      * @return the reached state(s)
      */
+    //TODO: Implement this method
     @Override
-    public List<NFAState> transitions(String alphabets) {
-        //TODO
-        return null;    }
+    public List<String> transitions(String alphabets) {
+        return null;
+    }
 
     /**
      * Return whether the input string is accepted by the FSA
@@ -40,8 +65,8 @@ public class NFA extends FSA<NFAState>{
      */
     @Override
     public boolean accept(String alphabets) {
-        for(NFAState state:transitions(alphabets)){
-            if (state.isAccepting()){
+        for (String state: transitions(alphabets)){
+            if(this.acceptingState.contains(state)){
                 return true;
             }
         }
